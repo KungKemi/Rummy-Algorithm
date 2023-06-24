@@ -72,7 +72,7 @@ public abstract class Algorithm {
     public static int getScore(List<Card> cards) {
         int score = 0;
         for (Card card : cards) {
-            score += Card.CARD_SCORES.get(card.getCardNum());
+            score += card.getCardScore();
         }
         return score;
     }

@@ -5,6 +5,7 @@ import util.Encodable;
 import util.IllegalCardException;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -72,6 +73,15 @@ public class Card implements Encodable {
      */
     public CardType getCardType() {
         return this.cardType;
+    }
+
+    /**
+     * Returns the score of the card
+     *
+     * @return the card score
+     */
+    public int getCardScore() {
+        return CARD_SCORES.get(this.cardNum);
     }
 
     /**
@@ -187,5 +197,14 @@ public class Card implements Encodable {
 
     public static List<CardType> getSuits() {
         return Arrays.asList(CardType.DIAMOND, CardType.HEART, CardType.CLUB, CardType.SPADE);
+    }
+
+    public static void sortByNum(List<Card> cards) {
+        cards.sort(Comparator.comparingInt(Card::getCardNum));
+    }
+
+    public static void sortBySuit(List<Card> cards) {
+        sortByNum(cards);
+        cards.sort(Comparator.comparing(Card::getCardType));
     }
 }

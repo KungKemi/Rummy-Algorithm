@@ -39,13 +39,16 @@ public class Command {
                     System.out.println("empty");
                 } else {
                     for (int i = 1; i <= this.hand.size(); i++) {
-                        System.out.printf("%d. %s\n", i, this.hand.get(i - 1));
+                        System.out.printf("%d.\t%s\n", i, this.hand.get(i - 1));
                     }
                 }
                 System.out.printf("\nNum books: %d\nNum runs: %d\n", this.numBooks, this.numRuns);
                 break;
-            case "stacks":
-                setNumStacks(line);
+            case "books":
+                setNumBooks(line);
+                break;
+            case "runs":
+                setNumRuns(line);
                 break;
             case "decks":
                 setNumDecks(line);
@@ -62,8 +65,14 @@ public class Command {
             case "score":
                 System.out.println(Algorithm.getScore(this.hand));
                 break;
+            case "sort":
+                sortHand(line);
+                break;
             case "reset":
                 this.hand = new ArrayList<>();
+                this.numBooks = 0;
+                this.numRuns = 0;
+                this.numDecks = DEFAULT_NUM_DECKS;
                 break;
             case "exit":
                 System.exit(0);
@@ -76,13 +85,15 @@ public class Command {
     public static void help() {
         Map<String, String> help = Map.ofEntries(
                 Map.entry("view", "look at current cards in hand"),
-                Map.entry("stacks [num books] [num runs]", "set the number of books and runs"),
+                Map.entry("books [num books]", "set the number of books"),
+                Map.entry("runs [num runs]", "set the number of runs"),
                 Map.entry("decks [num]", "specify number of decks to draw cards from (2 by default)"),
                 Map.entry("add [card name] [num]", "add new card(s) to hand (1 by default)"),
                 Map.entry("new [num]", "instantiates a new hand of randomly drawn cards\n\t\t(11 by default)"),
                 Map.entry("build", "determine the best bases for building books and/or runs,\n\t\tand how many more cards are needed."),
                 Map.entry("score", "determine your current score"),
                 Map.entry("reset", "resets the player's hand"),
+                Map.entry("sort [num]", "sort the hand of cards by:\n\t\t\t0 - number\n\t\t\t1 - suit"),
                 Map.entry("exit", "terminates the program")
         );
         System.out.println("List of valid commands:");
@@ -111,21 +122,35 @@ public class Command {
         return INVALID_INT;
     }
 
-    public void setNumStacks(String input) {
+    public void setNumBooks(String input) {
         String[] tokens = input.split(" ");
-        if (tokens.length > 2) {
-            // At least two arguments
-            // Parse number of books and runs
+        if (tokens.length > 1) {
+            // At least one argument
+            // Parse number of books
             int numBooks = parseInt(tokens[1]);
-            int numRuns = parseInt(tokens[2]);
-            if (numBooks >= 0 && numRuns >= 0) {
+            if (numBooks >= 0) {
                 this.numBooks = numBooks;
-                this.numRuns = numRuns;
             } else {
-                System.out.println("Error: arguments must both be non-negative");
+                System.out.println("Error: number must be non-negative");
             }
         } else {
-            System.out.println("Error: expecting at least two arguments");
+            System.out.println("Error: expecting at least one argument");
+        }
+    }
+
+    public void setNumRuns(String input) {
+        String[] tokens = input.split(" ");
+        if (tokens.length > 1) {
+            // At least one argument
+            // Parse number of runs
+            int numRuns = parseInt(tokens[1]);
+            if (numRuns >= 0) {
+                this.numRuns = numRuns;
+            } else {
+                System.out.println("Error: number must be non-negative");
+            }
+        } else {
+            System.out.println("Error: expecting at least one argument");
         }
     }
 
@@ -199,5 +224,26 @@ public class Command {
         }
         int numCardsMissing = Algorithm.numCardsMissing(bases, this.numBooks, this.numRuns);
         System.out.printf("\nNumber of cards missing: %d\n", numCardsMissing);
+    }
+
+    public void sortHand(String input) {
+        String[] tokens = input.split(" ");
+        if (tokens.length == 1) {
+            System.out.println("Error: expecting at least one argument");
+        } else {
+            int num = parseInt(tokens[1]);
+            if (num != INVALID_INT) {
+                switch(num) {
+                    case 0:
+                        Card.sortByNum(this.hand);
+                        break;
+                    case 1:
+                        Card.sortBySuit(this.hand);
+                        break;
+                    default:
+                        System.out.println("Error: not a valid sort option");
+                }
+            }
+        }
     }
 }
