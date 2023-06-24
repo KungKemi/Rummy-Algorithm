@@ -6,6 +6,7 @@ import hand.Deck;
 import util.BadEncodingException;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -83,19 +84,18 @@ public class Command {
     }
 
     public static void help() {
-        Map<String, String> help = Map.ofEntries(
-                Map.entry("view", "look at current cards in hand"),
-                Map.entry("books [num books]", "set the number of books"),
-                Map.entry("runs [num runs]", "set the number of runs"),
-                Map.entry("decks [num]", "specify number of decks to draw cards from (2 by default)"),
-                Map.entry("add [card name] [num]", "add new card(s) to hand (1 by default)"),
-                Map.entry("new [num]", "instantiates a new hand of randomly drawn cards\n\t\t(11 by default)"),
-                Map.entry("build", "determine the best bases for building books and/or runs,\n\t\tand how many more cards are needed."),
-                Map.entry("score", "determine your current score"),
-                Map.entry("reset", "resets the player's hand"),
-                Map.entry("sort [num]", "sort the hand of cards by:\n\t\t\t0 - number\n\t\t\t1 - suit"),
-                Map.entry("exit", "terminates the program")
-        );
+        Map<String, String> help = new LinkedHashMap<>();
+        help.put("view", "look at current cards in hand");
+        help.put("score", "determine your current score");
+        help.put("books [num books]", "set the number of books");
+        help.put("runs [num runs]", "set the number of runs");
+        help.put("decks [num]", "specify number of decks to draw cards from (2 by default)");
+        help.put("add [card name] [num]", "add new card(s) to hand (1 by default)");
+        help.put("new [num]", "instantiates a new hand of randomly drawn cards\n\t\t(11 by default)");
+        help.put("build", "determine the best bases for building books and/or runs,\n\t\tand how many more cards are needed.");
+        help.put("sort [num]", "sort the hand of cards by:\n\t\t\t0 - number\n\t\t\t1 - suit");
+        help.put("reset", "resets the player's hand");
+        help.put("exit", "terminates the program");
         System.out.println("List of valid commands:");
         for (Map.Entry<String, String> entry : help.entrySet()) {
             System.out.printf("\t%s\n\t\t%s\n", entry.getKey(), entry.getValue());
