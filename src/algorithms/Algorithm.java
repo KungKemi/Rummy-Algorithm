@@ -253,19 +253,4 @@ public abstract class Algorithm {
             }
         }
     }
-
-    public static void main(String[] args) {
-        int numBooks = 3;
-        int numRuns = 0;
-        List<Card> hand = Deck.shuffledHand(11, 2);
-
-        System.out.printf("Num jokers: %d\n\n", getJokers(hand).size());
-        for (CardType suit : Card.getSuits()) {
-            System.out.println(getCardFreqMap(hand, suit));
-        }
-        System.out.println();
-        Map<String, List<List<Card>>> bases = getOptimalBases(hand, numBooks, numRuns);
-        System.out.println(bases);
-        System.out.printf("\nNum missing cards: %d\n", numCardsMissing(bases, numBooks, numRuns));
-    }
 }

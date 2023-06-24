@@ -72,13 +72,4 @@ public class BookAlgorithm extends Algorithm {
         int numCardsMissing = MIN_BOOK_CARDS * numBooks - numBasesCards - numJokers;
         return Math.max(0, numCardsMissing);
     }
-
-    public static void main(String[] args) {
-        List<Card> hand = Deck.shuffledHand(15, 2);
-        System.out.printf("Num jokers: %d\n\n", getJokers(hand).size());
-        System.out.printf("%s\n\n", getCardFreqMap(hand, null));
-        List<List<Card>> bases = getBookBases(hand, 3);
-        System.out.println(bases);
-        System.out.printf("\nMissing %d cards\n", numCardsMissing(hand, bases, 3, false));
-    }
 }

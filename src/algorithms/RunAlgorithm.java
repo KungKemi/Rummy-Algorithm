@@ -156,16 +156,4 @@ public class RunAlgorithm extends Algorithm {
             cardMap.get(card.getCardNum()).remove(card);
         }
     }
-
-    public static void main(String[] args) {
-        List<Card> hand = Deck.shuffledHand(21, 2);
-        System.out.printf("Num jokers: %d\n\n", getJokers(hand).size());
-        for (CardType suit : Card.getSuits()) {
-            System.out.println(getCardFreqMap(hand, suit));
-        }
-        System.out.println();
-        List<List<Card>> bases = getRunBases(hand, 2);
-        System.out.println(bases);
-        System.out.printf("\nMissing %d cards\n", numCardsMissing(hand, bases, 2, false));
-    }
 }
