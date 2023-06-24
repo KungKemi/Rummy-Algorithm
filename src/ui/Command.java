@@ -13,7 +13,7 @@ public class Command {
     public final static int DEFAULT_NUM_DECKS = 2;
     public final static int INVALID_INT = -1;
     public final static int DEFAULT_HAND_SIZE = 11;
-    public final static String INVALID_CARD_MSG = "Error: %s is not a valid card name\nAn example of a valid name is `Card:1:SPADE`";
+    public final static String INVALID_CARD_MSG = "Error: %s is not a valid card name\nAn example of a valid name is 'Card:1:SPADE'\n";
     private List<Card> hand;
     private int numDecks;
     private int numBooks;
@@ -59,6 +59,9 @@ public class Command {
             case "build":
                 buildBases(line);
                 break;
+            case "score":
+                System.out.println(Algorithm.getScore(this.hand));
+                break;
             case "reset":
                 this.hand = new ArrayList<>();
                 break;
@@ -78,6 +81,7 @@ public class Command {
                 Map.entry("add [card name] [num]", "add new card(s) to hand (1 by default)"),
                 Map.entry("new [num]", "instantiates a new hand of randomly drawn cards\n\t\t(11 by default)"),
                 Map.entry("build", "determine the best bases for building books and/or runs,\n\t\tand how many more cards are needed."),
+                Map.entry("score", "determine your current score"),
                 Map.entry("reset", "resets the player's hand"),
                 Map.entry("exit", "terminates the program")
         );
@@ -184,9 +188,13 @@ public class Command {
                 this.hand, this.numBooks, this.numRuns);
         for (Map.Entry<String, List<List<Card>>> entry : bases.entrySet()) {
             int numPrinted = 0;
+            StringBuilder label = new StringBuilder(entry.getKey());
+            // Remove trailing 's'
+            label.setLength(label.length() - 1);
             for (List<Card> stack : entry.getValue()) {
+                // Print out bases
                 numPrinted++;
-                System.out.printf("%s %d: %s\n", entry.getKey(), numPrinted, stack);
+                System.out.printf("%s %d: %s\n", label, numPrinted, stack);
             }
         }
         int numCardsMissing = Algorithm.numCardsMissing(bases, this.numBooks, this.numRuns);
