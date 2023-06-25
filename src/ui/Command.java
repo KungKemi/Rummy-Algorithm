@@ -17,7 +17,7 @@ public class Command {
     public final static int INVALID_INT = -1;
     public final static int DEFAULT_NUM_DECKS = 2;
     public final static int DEFAULT_HAND_SIZE = 11;
-    public final static String INVALID_CARD_MSG = "Error: %s is not a valid card name\nAn example of a valid name is 'Card:1:SPADE'\n";
+    public final static String INVALID_CARD_MSG = "Error: '%s' is not a valid card name\nAn example of a valid name is 'Card:1:SPADE'\n";
     private List<Card> hand;
     private int numDecks;
     private int numBooks;
