@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Command {
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_CYAN = "\033[0;96m";
+    public final static String ANSI_RESET = "\u001B[0m";
+    public final static String ANSI_CYAN = "\033[0;96m";
 
     public final static int INVALID_INT = -1;
     public final static int DEFAULT_NUM_DECKS = 2;
