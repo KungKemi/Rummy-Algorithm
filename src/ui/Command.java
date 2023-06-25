@@ -11,8 +11,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Command {
-    public final static int DEFAULT_NUM_DECKS = 2;
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_CYAN = "\033[0;96m";
+
     public final static int INVALID_INT = -1;
+    public final static int DEFAULT_NUM_DECKS = 2;
     public final static int DEFAULT_HAND_SIZE = 11;
     public final static String INVALID_CARD_MSG = "Error: %s is not a valid card name\nAn example of a valid name is 'Card:1:SPADE'\n";
     private List<Card> hand;
@@ -43,7 +46,8 @@ public class Command {
                         System.out.printf("%d.\t%s\n", i, this.hand.get(i - 1));
                     }
                 }
-                System.out.printf("\nNum books:\t%d\nNum runs:\t%d\n", this.numBooks, this.numRuns);
+                System.out.printf("\nNum decks:\t%d\nNum books:\t%d\nNum runs:\t%d\n",
+                        this.numDecks, this.numBooks, this.numRuns);
                 break;
             case "books":
                 setNumBooks(line);
@@ -64,10 +68,13 @@ public class Command {
                 buy(line);
                 break;
             case "build":
-                buildBases(line);
+                buildBases();
                 break;
             case "score":
                 System.out.println(Algorithm.getScore(this.hand));
+                break;
+            case "discard":
+                discard();
                 break;
             case "sort":
                 sortHand(line);
@@ -97,12 +104,14 @@ public class Command {
         help.put("new [num cards]", "instantiates a new hand of randomly drawn cards\n\t\t(11 by default)");
         help.put("buy [card name]", "determine whether a given card should be bought");
         help.put("build", "determine the best bases for building books and/or runs,\n\t\tand how many more cards are needed.");
+        help.put("discard", "determine the best card to discard");
         help.put("sort [option]", "sort the hand of cards by:\n\t\t\t0 - number\n\t\t\t1 - suit");
         help.put("reset", "resets the player's hand");
         help.put("exit", "terminates the program");
         System.out.println("List of valid commands:");
         for (Map.Entry<String, String> entry : help.entrySet()) {
-            System.out.printf("\t%s\n\t\t%s\n", entry.getKey(), entry.getValue());
+            System.out.printf(ANSI_CYAN + "\t%s\n\t\t" + ANSI_RESET, entry.getKey());
+            System.out.println(entry.getValue());
         }
     }
 
@@ -221,17 +230,17 @@ public class Command {
             try {
                 Card card = Card.fromString(tokens[1]);
                 List<Card> handCopy = new ArrayList<>(this.hand);
-                Map<String, List<List<Card>>> bases = Algorithm.getOptimalBases(
+                Map<String, List<List<Card>>> basesMap = Algorithm.getOptimalBases(
                         handCopy, this.numBooks, this.numRuns);
                 // Calculate how many cards are missing before adding card
                 int initMissingCards = Algorithm.numCardsMissing(
-                        bases, this.numBooks, this.numRuns);
+                        basesMap, this.numBooks, this.numRuns);
                 handCopy.add(card);
-                bases = Algorithm.getOptimalBases(
+                basesMap = Algorithm.getOptimalBases(
                         handCopy, this.numBooks, this.numRuns);
                 // Calculate how many cards are missing after adding card
                 int newMissingCards = Algorithm.numCardsMissing(
-                        bases, this.numBooks, this.numRuns);
+                        basesMap, this.numBooks, this.numRuns);
                 if (newMissingCards < initMissingCards) {
                     // If the number of needed cards are lower, then buy
                     System.out.println("yes");
@@ -244,11 +253,10 @@ public class Command {
         }
     }
 
-    public void buildBases(String input) {
-        String[] tokens = input.split(" ");
-        Map<String, List<List<Card>>> bases = Algorithm.getOptimalBases(
+    public void buildBases() {
+        Map<String, List<List<Card>>> basesMap = Algorithm.getOptimalBases(
                 this.hand, this.numBooks, this.numRuns);
-        for (Map.Entry<String, List<List<Card>>> entry : bases.entrySet()) {
+        for (Map.Entry<String, List<List<Card>>> entry : basesMap.entrySet()) {
             int numPrinted = 0;
             StringBuilder label = new StringBuilder(entry.getKey());
             // Remove trailing 's'
@@ -259,8 +267,24 @@ public class Command {
                 System.out.printf("%s %d:\t%s\n", label, numPrinted, stack);
             }
         }
-        int numCardsMissing = Algorithm.numCardsMissing(bases, this.numBooks, this.numRuns);
+        int numCardsMissing = Algorithm.numCardsMissing(
+                basesMap, this.numBooks, this.numRuns);
         System.out.printf("\nNumber of cards missing: %d\n", numCardsMissing);
+    }
+
+    public void discard() {
+        Map<String, List<List<Card>>> basesMap = Algorithm.getOptimalBases(
+                this.hand, this.numBooks, this.numRuns);
+        List<Card> handCopy = new ArrayList<>(this.hand);
+        for (List<List<Card>> bases : basesMap.values()) {
+            Algorithm.removeBases(handCopy, bases);
+        }
+        Card card = Card.getBestDiscard(handCopy);
+        if (card == null) {
+            System.out.println("none");
+        } else {
+            System.out.println(card);
+        }
     }
 
     public void sortHand(String input) {

@@ -199,6 +199,17 @@ public class Card implements Encodable {
         return Arrays.asList(CardType.DIAMOND, CardType.HEART, CardType.CLUB, CardType.SPADE);
     }
 
+    public static Card getBestDiscard(List<Card> cards) {
+        Card discard = null;
+        for (Card card : cards) {
+            if (discard == null || card.getCardScore() > discard.getCardScore()) {
+                // Change to new maximum
+                discard = card;
+            }
+        }
+        return discard;
+    }
+
     public static void sortByNum(List<Card> cards) {
         cards.sort(Comparator.comparingInt(Card::getCardNum));
     }
